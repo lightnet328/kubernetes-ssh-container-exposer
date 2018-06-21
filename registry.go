@@ -17,6 +17,7 @@ type Config struct {
 	Port     int    `default:"3306"`
 	Host     string `default:"localhost"`
 	User     string `default:"root"`
+	Password string `default:""`
 	Database string `default:"sshpiper"`
 }
 
@@ -39,7 +40,7 @@ func (r *Registry) ConnectDatabase() error {
 	if err != nil {
 		return err
 	}
-	source := fmt.Sprintf("%s:@tcp(%s:%d)/%s", conf.User, conf.Host, conf.Port, conf.Database)
+	source := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", conf.User, conf.Password, conf.Host, conf.Port, conf.Database)
 	r.database, err = sql.Open("mysql", source)
 	return err
 }
