@@ -1,0 +1,6 @@
+1. Get the SSHPiper endpoint by running these commands:
+{{- if contains "NodePort" .Values.sshpiper.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "kubernetes-ssh-container-exposer.fullname" . }}-sshpiper)
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  ssh $NODE_IP -p $NODE_PORT -l namespace
+{{- end }}

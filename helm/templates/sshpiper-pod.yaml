@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ template "kubernetes-ssh-container-exposer.fullname" . }}-sshpiper
+  labels:
+    app: {{ template "kubernetes-ssh-container-exposer.name" . }}-sshpiper
+    chart: {{ template "kubernetes-ssh-container-exposer.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  containers:
+    - name: {{ template "kubernetes-ssh-container-exposer.name" . }}-sshpiper
+      image: "{{ .Values.sshpiper.image.repository }}:{{ .Values.sshpiper.image.tag }}"
+      imagePullPolicy: {{ .Values.sshpiper.image.pullPolicy }}
+      ports:
+        - containerPort: 2222
+      env:
+        - name: SSHPIPERD_UPSTREAM_DRIVER
+          value: mysql
+        - name: SSHPIPERD_UPSTREAM_MYSQL_HOST
+          value: "$({{ template "mysql.host" . }})"
+        - name: SSHPIPERD_UPSTREAM_MYSQL_PASSWORD
+          value: {{ .Values.mysql.mysqlRootPassword }}
+  hostNetwork: true
