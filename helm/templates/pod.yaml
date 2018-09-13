@@ -19,3 +19,4 @@ spec:
           value: {{ .Values.mysql.mysqlRootPassword }}
         - name: KSCE_MYSQL_PORT
           value: "$({{ template "mysql.port" . }})"
+      restartPolicy: {{ .Values.restartPolicy }}
