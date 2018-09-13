@@ -109,11 +109,12 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 		if rec != nil {
 			serverID = rec.Id
 		} else {
-			serverID, err = s.Post(&crud.ServerRecord{Name: upstream.Name, Address: upstream.Address})
-			err = s.Commit()
+			if serverID, err = s.Post(&crud.ServerRecord{Name: upstream.Name, Address: upstream.Address}); err == nil {
+				err = s.Commit()
+			} else {
+				err = s.Rollback()
+			}
 		}
-	} else {
-		return nil, err
 	}
 	if err != nil {
 		return nil, err
@@ -124,11 +125,12 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 		if rec != nil {
 			upstreamID = rec.Id
 		} else {
-			upstreamID, err = u.Post(&crud.UpstreamRecord{Name: upstream.Name, ServerId: serverID, Username: "root"})
-			err = u.Commit()
+			if upstreamID, err = u.Post(&crud.UpstreamRecord{Name: upstream.Name, ServerId: serverID, Username: "root"}); err == nil {
+				err = u.Commit()
+			} else {
+				err = u.Rollback()
+			}
 		}
-	} else {
-		return nil, err
 	}
 	if err != nil {
 		return nil, err
@@ -136,40 +138,43 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 
 	uum := crud.NewUserUpstreamMap(r.database)
 	if rec, err := uum.GetFirstByUpstreamId(upstreamID); err == nil && rec == nil {
-		_, err = uum.Post(&crud.UserUpstreamMapRecord{UpstreamId: upstreamID, Username: upstream.Username})
-		err = uum.Commit()
-	} else {
-		return nil, err
+		if _, err = uum.Post(&crud.UserUpstreamMapRecord{UpstreamId: upstreamID, Username: upstream.Username}); err == nil {
+			err = uum.Commit()
+		} else {
+			err = uum.Rollback()
+		}
 	}
 	if err != nil {
 		return nil, err
 	}
 
 	prv := crud.NewPrivateKeys(r.database)
-	if rec, err := prv.GetFirstByData(upstream.SSHPiperPrivateKey); err == nil && rec == nil {
+	if rec, err := prv.GetFirstByData(upstream.SSHPiperPrivateKey); err == nil {
 		if rec != nil {
 			privateKeyID = rec.Id
 		} else {
-			privateKeyID, err = prv.Post(&crud.PrivateKeysRecord{Name: upstream.Name, Data: upstream.SSHPiperPrivateKey})
-			err = prv.Commit()
+			if privateKeyID, err = prv.Post(&crud.PrivateKeysRecord{Name: upstream.Name, Data: upstream.SSHPiperPrivateKey}); err == nil {
+				err = prv.Commit()
+			} else {
+				err = prv.Rollback()
+			}
 		}
-	} else {
-		return nil, err
 	}
 	if err != nil {
 		return nil, err
 	}
 
 	pub := crud.NewPublicKeys(r.database)
-	if rec, err := pub.GetFirstByData(upstream.DownstreamPublicKey); err == nil && rec == nil {
+	if rec, err := pub.GetFirstByData(upstream.DownstreamPublicKey); err == nil {
 		if rec != nil {
 			publicKeyID = rec.Id
 		} else {
-			publicKeyID, err = pub.Post(&crud.PublicKeysRecord{Name: upstream.Name, Data: upstream.DownstreamPublicKey})
-			err = pub.Commit()
+			if publicKeyID, err = pub.Post(&crud.PublicKeysRecord{Name: upstream.Name, Data: upstream.DownstreamPublicKey}); err == nil {
+				err = pub.Commit()
+			} else {
+				err = pub.Rollback()
+			}
 		}
-	} else {
-		return nil, err
 	}
 	if err != nil {
 		return nil, err
@@ -177,10 +182,11 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 
 	ppm := crud.NewPubkeyPrikeyMap(r.database)
 	if rec, err := ppm.GetFirstByPrivateKeyId(privateKeyID); err == nil && rec == nil {
-		_, err = ppm.Post(&crud.PubkeyPrikeyMapRecord{PrivateKeyId: privateKeyID, PubkeyId: publicKeyID})
-		err = ppm.Commit()
-	} else {
-		return nil, err
+		if _, err = ppm.Post(&crud.PubkeyPrikeyMapRecord{PrivateKeyId: privateKeyID, PubkeyId: publicKeyID}); err == nil {
+			err = ppm.Commit()
+		} else {
+			err = ppm.Rollback()
+		}
 	}
 	if err != nil {
 		return nil, err
