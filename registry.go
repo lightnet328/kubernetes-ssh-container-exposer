@@ -7,6 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/kelseyhightower/envconfig"
 	crud "github.com/tg123/sshpiper/sshpiperd/upstream/mysql/crud"
+	"go.uber.org/zap"
 )
 
 type Registry struct {
@@ -40,6 +41,7 @@ func (r *Registry) ConnectDatabase() error {
 	if err != nil {
 		return err
 	}
+	logger.Info("MySQL Config", zap.String("user", conf.User), zap.String("host", conf.Host), zap.Int("port", conf.Port), zap.String("database", conf.Database))
 	source := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", conf.User, conf.Password, conf.Host, conf.Port, conf.Database)
 	r.database, err = sql.Open("mysql", source)
 	return err
@@ -91,6 +93,7 @@ func (r *Registry) TruncateAll() error {
 			return err
 		}
 	}
+	logger.Info("Database truncated")
 	return nil
 }
 
@@ -182,6 +185,8 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	logger.Info("Upstream registered", zap.String("name", upstream.Name), zap.String("username", upstream.Username), zap.String("public_key", upstream.DownstreamPublicKey))
 
 	return nil, err
 }

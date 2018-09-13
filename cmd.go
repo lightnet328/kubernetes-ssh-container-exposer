@@ -9,9 +9,13 @@ import (
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+
+	"go.uber.org/zap"
 )
 
-var SSHServicePort int32 = 22
+var logger, _ = zap.NewDevelopment()
+
+const SSHServicePort int32 = 22
 
 type Services []v1.Service
 type GroupedServices map[string]Services
@@ -48,6 +52,7 @@ func filterSSHServices(services Services) Services {
 	for _, service := range services {
 		if hasPort(service.Spec.Ports, SSHServicePort) {
 			SSHServices = append(SSHServices, service)
+			logger.Info("Service found", zap.String("name", service.Name), zap.String("namespace", service.Namespace))
 		}
 	}
 	return SSHServices
@@ -107,7 +112,7 @@ func registerServices(registry *Registry, services GroupedServices, serviceKeys 
 				return err
 			}
 		case 2:
-			log.Printf("Registration process is skipped. There are two or more services using %d port for service in namespace %s.\n", SSHServicePort, namespace)
+			logger.Info("Registration process is skipped. There are two or more services using port for service in namespace.\n", zap.String("namespace", namespace), zap.Int32("port", SSHServicePort))
 		default:
 			continue
 		}
