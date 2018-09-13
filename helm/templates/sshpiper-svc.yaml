@@ -14,6 +14,9 @@ spec:
       targetPort: 2222
       protocol: TCP
       name: ssh
+      {{- if and .Values.sshpiper.service.nodePort (eq "NodePort" .Values.sshpiper.service.type) }}
+      nodePort: {{ .Values.sshpiper.service.nodePort }}
+      {{- end }}
   selector:
     app: {{ template "kubernetes-ssh-container-exposer.name" . }}-sshpiper
     release: {{ .Release.Name }}
