@@ -149,7 +149,7 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 	}
 
 	prv := crud.NewPrivateKeys(r.database)
-	if rec, err := prv.GetFirstByData(upstream.SSHPiperPrivateKey); err == nil {
+	if rec, err := prv.GetFirstByName(upstream.Name); err == nil {
 		if rec != nil {
 			privateKeyID = rec.Id
 		} else {
@@ -165,7 +165,7 @@ func (r *Registry) RegisterUpstream(upstream *Upstream) (*Upstream, error) {
 	}
 
 	pub := crud.NewPublicKeys(r.database)
-	if rec, err := pub.GetFirstByData(upstream.DownstreamPublicKey); err == nil {
+	if rec, err := pub.GetFirstByName(upstream.Name); err == nil {
 		if rec != nil {
 			publicKeyID = rec.Id
 		} else {
