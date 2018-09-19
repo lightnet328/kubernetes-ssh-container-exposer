@@ -62,7 +62,7 @@ The following table lists the configurable parameters of the KSCE chart and thei
 | Parameter                   | Description                   | Default                                        |
 | --------------------------- | ----------------------------- | ---------------------------------------------- |
 | `image.repository`          | KSCE Image name               | `lightnet328/kubernetes-ssh-container-exposer` |
-| `image.tag`                 | KSCE Image tag                | `0.1.0`                                        |
+| `image.tag`                 | KSCE Image tag                | `0.2.0`                                        |
 | `image.pullPolicy`          | Image pull policy             | `IfNotPresent`                                 |
 | `sshpiper.image.repository` | SSHPiper Image name           | `farmer1992/sshpiperd`                         |
 | `sshpiper.image.tag`        | SSHPiper Image tag            | `latest`                                       |

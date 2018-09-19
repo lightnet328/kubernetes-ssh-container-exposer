@@ -15,6 +15,7 @@ import (
 
 var logger, _ = zap.NewDevelopment()
 
+const VERSION = "0.2.0"
 const SSHServicePort int32 = 22
 
 type Services []v1.Service
@@ -148,6 +149,8 @@ func initialize() error {
 }
 
 func main() {
+	logger.Info("Started", zap.String("version", VERSION))
+
 	err := initialize()
 	if err != nil {
 		log.Fatal(err)
