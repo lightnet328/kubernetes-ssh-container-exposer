@@ -1,4 +1,4 @@
-FROM golang:1.10.3
+FROM golang:1.12.4
 
 WORKDIR /go/src/github.com/lightnet328/kubernetes-ssh-container-exposer
 
