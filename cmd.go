@@ -15,7 +15,7 @@ import (
 
 var logger, _ = zap.NewDevelopment()
 
-const VERSION = "0.2.0"
+const VERSION = "0.3.0"
 const SSHServicePort int32 = 22
 
 type Services []v1.Service

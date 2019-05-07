@@ -4,7 +4,7 @@
 
 image:
   repository: lightnet328/kubernetes-ssh-container-exposer
-  tag: 0.2.0
+  tag: 0.3.0
   pullPolicy: IfNotPresent
 
 restartPolicy: Never
